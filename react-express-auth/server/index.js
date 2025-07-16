@@ -48,6 +48,13 @@ app.patch("/api/users/:id", checkAuthentication, userControllers.updateUser);
 const cases = require("./routes/cases");
 app.use("/api/cases", cases);
 
+
+///////////////////////////////
+// Comment Routes
+///////////////////////////////
+const commentRoutes = require('./routes/commentRoutes');
+app.use('/api/comments', commentRoutes);
+
 ///////////////////////////////
 // Fallback Routes
 ///////////////////////////////
