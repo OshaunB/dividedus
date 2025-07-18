@@ -1,8 +1,11 @@
+@import "tailwindcss";
+
+/* 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-}
+} */
 
 body {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
@@ -46,7 +49,7 @@ header {
   font-size: 1.5rem;
   font-weight: bold;
   text-decoration: none;
-  color: #FFF;
+  color: #fff;
 }
 
 nav ul {
@@ -59,22 +62,22 @@ nav ul {
 
 nav a {
   display: block;
-  color: #FFF;
+  color: #fff;
 }
 
 form {
   padding: 1rem;
-  border: 1px solid #CCC;
+  border: 1px solid #ccc;
   width: 15rem;
 }
 
-form>h2 {
+form > h2 {
   margin-bottom: 1rem;
 }
 
 /* automatically added by NavLink component */
 .active {
-  color: #EEBC32;
+  color: #eebc32;
   font-weight: bold;
   font-style: italic;
 }
