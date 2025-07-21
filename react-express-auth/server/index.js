@@ -2,13 +2,18 @@
 // Imports
 ///////////////////////////////
 /*
-index.js: hey use these routes
-//routes are defined somewhere else
-//app.use("/api/comments", commentRoutes);
-//the line above says, "attach this path to the defined routes(that are in different file)"
-index.js basically says, "use this route prefix", the suffix path comes from the require,
-the files in route folder
-//the routes folder file define the crud option as well well as assign controllers
+index.js: This is where we tell the app to use certain routes.
+
+Example:
+app.use("/api/comments", commentRoutes);
+
+This line means:
+→ “For any request that starts with /api/comments,
+   use the routes defined in the commentRoutes file.”
+
+The actual route logic (GET, POST, PUT, DELETE) is defined in separate files
+inside the routes folder. Those route files also connect to their corresponding
+controller functions, which handle what the app should do for each route.
 */
 
 require("dotenv").config();

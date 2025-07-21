@@ -1,6 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const commentController = require('../controllers/commentController');
+// When someone makes a GET request to /api/comments,
+// this route will run the getAllComments controller function.
+// Because this file is used with app.use("/api/comments", commentRoutes),
+// this `'/'` path refers to the full `/api/comments` URL.
 
 // GET all comments
 router.get('/', commentController.getAllComments);

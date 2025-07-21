@@ -87,14 +87,14 @@ export default function SiteHeadingAndNav() {
           </li>
           <li>
             <NavLink
-              to="/resources"
+              to="/ask-ophelia"
               className={({ isActive }) =>
                 `flex items-center gap-2 border-b-2 pb-1 transition-all duration-200 ${
                   isActive ? "border-white" : "border-transparent"
                 }`
               }>
               <BookOpenIcon className="h-5 w-5" />
-              Resources
+              Ask Ophelia
             </NavLink>
           </li>
         </ul>
