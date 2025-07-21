@@ -32,5 +32,7 @@ module.exports = {
     'consistent-return': 'off',
     'no-unused-expressions': ["error", { allowTernary: true }],
     'no-unused-vars': ['error', { argsIgnorePattern: '_|(knex)', destructuredArrayIgnorePattern: '^_' }],
+    "linebreak-style": "off",
+    "arrow-body-style": "off",
   },
 };

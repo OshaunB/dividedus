@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import Carousel from "./Carousel";
 
-const GUARDIAN_API_KEY = import.meta.env.VITE_GUARDIAN_API_KEY;
-
 export default function RealPeopleSection() {
   const [articles, setArticles] = useState([]);
 

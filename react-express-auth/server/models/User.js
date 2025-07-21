@@ -12,7 +12,7 @@ class User {
     this.id = id;
     this.username = username;
     this.avatar_url = avatar_url; // optional field: profile image
-    this.quote = quote;           // optional field: personal message
+    this.quote = quote; // optional field: personal message
     this.#passwordHash = password_hash; // keep hash private
   }
 

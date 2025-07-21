@@ -19,13 +19,29 @@ class Case {
     return result.rows;
   }
 
-  static async create({ name, description, status, date_detained, location, image_url, user_id }) {
+  static async create({
+    name,
+    description,
+    status,
+    date_detained,
+    location,
+    image_url,
+    user_id,
+  }) {
     const query = `
       INSERT INTO cases (name, description, status, date_detained, location, image_url, user_id)
       VALUES (?, ?, ?, ?, ?, ?, ?)
       RETURNING *;
     `;
-    const values = [name, description, status, date_detained, location, image_url, user_id];
+    const values = [
+      name,
+      description,
+      status,
+      date_detained,
+      location,
+      image_url,
+      user_id,
+    ];
     const result = await knex.raw(query, values);
     return result.rows[0];
   }
