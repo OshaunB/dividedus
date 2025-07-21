@@ -58,7 +58,7 @@ export default function SiteHeadingAndNav() {
         </button>
 
         {/* Desktop Nav */}
-        <ul className="hidden md:flex gap-x-16 text-xl items-center">
+        <ul className="hidden md:flex gap-x-16 text-xl items-center ">
           <li>
             <NavLink
               to="/cases"

@@ -9,11 +9,11 @@ export default function HeroSection() {
         className="w-screen h-[calc(100vh-73.6px)] object-cover"
       />
       {/* Dark overlay */}
-      <div className="absolute inset-0 bg-black opacity-60 z-10" />
+      <div className="absolute inset-0 bg-black opacity-75 z-10" />
 
       {/* Foreground content */}
-      <div className="absolute top-15 left-8 text-left text-white z-20 pr-4">
-        <h1 className="text-[4rem] sm:text-[5rem] md:text-[7rem] lg:text-[7rem] font-semibold leading-tight text-[#C2B280]">
+      <div className="absolute top-20 left-14 text-left text-white z-20 ">
+        <h1 className="text-[4rem] sm:text-[5rem] md:text-[7rem] lg:text-[9rem] font-semibold leading-tight text-[#C2B280]">
           TORN BY <br />
           BORDERS, TIED <br />
           BY BLOOD<span className="text-[#C2B280]">.</span>
