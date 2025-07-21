@@ -1,6 +1,15 @@
 ///////////////////////////////
 // Imports
 ///////////////////////////////
+/*
+index.js: hey use these routes
+//routes are defined somewhere else
+//app.use("/api/comments", commentRoutes);
+//the line above says, "attach this path to the defined routes(that are in different file)"
+index.js basically says, "use this route prefix", the suffix path comes from the require,
+the files in route folder
+//the routes folder file define the crud option as well well as assign controllers
+*/
 
 require("dotenv").config();
 const path = require("path");
@@ -48,12 +57,15 @@ app.patch("/api/users/:id", checkAuthentication, userControllers.updateUser);
 const cases = require("./routes/cases");
 app.use("/api/cases", cases);
 
-
 ///////////////////////////////
 // Comment Routes
 ///////////////////////////////
-const commentRoutes = require('./routes/commentRoutes');
-app.use('/api/comments', commentRoutes);
+const commentRoutes = require("./routes/commentRoutes");
+app.use("/api/comments", commentRoutes);
+
+const askOpheliaRoute = require("./routes/askOphelia");
+
+app.use("/api/ask-ophelia", askOpheliaRoute);
 
 ///////////////////////////////
 // Fallback Routes
