@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 export default function AskOphelia() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const bottomRef = useRef(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -34,52 +35,67 @@ export default function AskOphelia() {
     }
   };
 
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
   return (
-    <div className="flex flex-col w-full h-[calc(100vh-73.6px)] bg-black">
-      <header className="w-full flex flex-col items-center text-center space-y-2">
-        <h1 className="text-4xl w-full font-bold text-[#C2B280] pt-16 ">
+    <div className="flex flex-col w-full h-[calc(100vh-73.6px)] bg-black px-4 sm:px-6 lg:px-12">
+      <header className="w-full flex flex-col items-center text-center space-y-2 pt-12">
+        <h1 className="text-5xl font-extrabold text-[#C2B280] tracking-wide py-4">
           Ophelia
         </h1>
-        <p className="text-white text-xl py-4">
-          Ask me anything related to ICE and I'll answer!
+        <p className="text-white text-lg sm:text-xl max-w-xl">
+          Ask me anything related to ICE, detention, and immigration and I will
+          provide resources
         </p>
       </header>
 
-      <div className="flex-1 overflow-y-auto px-24 py-2 space-y-4">
+      <div className="flex-1 overflow-y-auto py-6 space-y-4">
         {messages.map((msg, idx) => (
           <div
             key={idx}
-            className={`max-w-3xl px-8 py-6 rounded-lg text-white ${
+            className={`max-w-3xl px-10 py-6 rounded-lg text-white transition duration-300 ease-in-out shadow-md ${
               msg.type === "user"
-                ? "bg-gray-700 self-end ml-auto text-right text-2xl"
-                : "bg-[#0E1D21] self-start mr-auto text-left text-2xl"
+                ? "bg-[#334155] self-end ml-auto text-right text-lg sm:text-2xl rounded-br-none"
+                : "bg-[#0E1D21] self-start mr-auto text-left text-lg sm:text-2xl rounded-bl-none"
             }`}>
             {msg.text}
           </div>
         ))}
         {isLoading && (
-          <div className=" text-gray-600 px-4 py-2 rounded self-start text-4xl mr-auto">
+          <div className="bg-[#1f2937] text-white px-6 py-4 rounded-lg text-left text-lg max-w-3xl self-start animate-pulse shadow-sm">
             Ophelia is typing...
           </div>
         )}
+        <div ref={bottomRef} />
       </div>
-      <div className="w-full px-4">
+
+      <div className="w-full px-2 sm:px-4">
         <form
           onSubmit={handleSubmit}
-          className="sticky bottom-0 bg-white p-4 flex gap-2 border-t border-gray-200 max-w-2xl w-full mx-auto">
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Enter your question here..."
-            className="flex-1 border border-gray-300 rounded-full px-4 py-2 focus:outline-none"
-          />
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="bg-gray-800 text-white rounded-full px-6 py-2 font-medium hover:bg-gray-700">
-            Send
-          </button>
+          className="sticky bottom-0 bg-black p-4 flex items-center justify-center w-full mx-auto">
+          <div className="flex items-center w-full max-w-3xl gap-x-2">
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Ex. living conditions"
+              className="flex-1 border border-gray-600 rounded-full px-4 sm:px-6 py-3 sm:py-4 bg-white text-black focus:outline-none focus:ring-2 focus:ring-[#C2B280] text-base sm:text-lg md:text-xl text-center"
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSubmit(e);
+                }
+              }}
+            />
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="h-full px-4 sm:px-6 py-2 sm:py-3 bg-[#C2B280] text-black text-base sm:text-lg font-semibold rounded-full hover:bg-[#e0d6ac] transition-colors flex items-center justify-center">
+              Send
+            </button>
+          </div>
         </form>
       </div>
     </div>

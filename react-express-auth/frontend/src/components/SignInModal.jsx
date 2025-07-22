@@ -29,7 +29,7 @@ export default function SignInModal({ isOpen, onClose, onSuccess }) {
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full">
             <Field>
-              <Label className="text-sm font-medium text-white">Username</Label>
+              <Label className="text-xl font-medium text-white">Username</Label>
               <Input
                 required
                 placeholder="Enter username"
@@ -41,7 +41,7 @@ export default function SignInModal({ isOpen, onClose, onSuccess }) {
             </Field>
 
             <Field>
-              <Label className="text-sm font-medium text-white">Password</Label>
+              <Label className="text-xl font-medium text-white">Password</Label>
               <Input
                 required
                 type="password"
