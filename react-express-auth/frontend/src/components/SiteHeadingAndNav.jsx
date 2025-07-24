@@ -13,9 +13,10 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/solid";
 
-export default function SiteHeadingAndNav() {
-  const { currentUser } = useContext(CurrentUserContext);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+export default function SiteHeadingAndNav({ isModalOpen, setIsModalOpen }) {
+  const { currentUser, setCurrentUser } = useContext(CurrentUserContext);
+  console.log("Navbar: currentUser is", currentUser);
+  // const [isModalOpen, setIsModalOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleProtectedClick = (e, path) => {
@@ -65,7 +66,9 @@ export default function SiteHeadingAndNav() {
               onClick={(e) => handleProtectedClick(e, "/cases")}
               className={({ isActive }) =>
                 `flex items-center gap-2 border-b-2 pb-1 transition-all duration-200 ${
-                  currentUser && isActive ? "border-white" : "border-transparent"
+                  currentUser && isActive
+                    ? "border-white"
+                    : "border-transparent"
                 }`
               }>
               <ChatBubbleLeftEllipsisIcon className="h-5 w-5" />
@@ -78,7 +81,9 @@ export default function SiteHeadingAndNav() {
               onClick={(e) => handleProtectedClick(e, "/report")}
               className={({ isActive }) =>
                 `flex items-center gap-2 border-b-2 pb-1 transition-all duration-200 ${
-                  currentUser && isActive ? "border-white" : "border-transparent"
+                  currentUser && isActive
+                    ? "border-white"
+                    : "border-transparent"
                 }`
               }>
               <NewspaperIcon className="h-5 w-5" />
@@ -123,13 +128,17 @@ export default function SiteHeadingAndNav() {
         {/* Mobile Dropdown */}
         {isMobileMenuOpen && (
           <div className="absolute top-full left-0 w-full bg-[#28353A] flex flex-col gap-4 py-4 px-6 text-xl md:hidden">
-            <NavLink to="/cases" onClick={(e) => handleProtectedClick(e, "/cases")}>
+            <NavLink
+              to="/cases"
+              onClick={(e) => handleProtectedClick(e, "/cases")}>
               <div className="flex items-center gap-2">
                 <ChatBubbleLeftEllipsisIcon className="h-5 w-5" />
                 Cases
               </div>
             </NavLink>
-            <NavLink to="/report" onClick={(e) => handleProtectedClick(e, "/report")}>
+            <NavLink
+              to="/report"
+              onClick={(e) => handleProtectedClick(e, "/report")}>
               <div className="flex items-center gap-2">
                 <NewspaperIcon className="h-5 w-5" />
                 Report
@@ -163,7 +172,15 @@ export default function SiteHeadingAndNav() {
         )}
       </header>
 
-      <SignInModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <SignInModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        
+        onSuccess={(user) => {
+          setCurrentUser(user); // Save user in context
+          navigate("/"); // Redirect after login
+        }}
+      />
     </>
   );
 }
