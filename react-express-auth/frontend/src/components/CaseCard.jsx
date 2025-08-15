@@ -10,13 +10,12 @@ export default function CaseCard({ c }) {
         h-[420px] max-w-[300px] w-full overflow-hidden
         rounded-[22px] bg-white p-6 shadow-lg
         flex flex-col items-center gap-3
-        ring-0 transition hover:ring-4 hover:ring-sky-300
-      "
-    >
+        ring-0 transition hover:ring-4 hover:ring-[#DCC89D]
+      ">
       {c.photo_url ? (
         <img
           src={c.photo_url}
-          alt={c.person_name || 'Case photo'}
+          alt={c.person_name || "Case photo"}
           className="h-40 w-full rounded-[14px] object-cover"
           loading="lazy"
         />
@@ -40,8 +39,7 @@ export default function CaseCard({ c }) {
         to={`/cases/${c.id}`}
         className="mt-2 inline-flex items-center justify-center rounded-md
                    bg-[#D0BC86] px-6 py-2.5 text-sm md:text-base font-medium text-slate-900
-                   shadow-sm hover:bg-[#DBC994] focus:outline-none"
-      >
+                   shadow-sm hover:bg-[#DBC994] focus:outline-none">
         View
       </Link>
 

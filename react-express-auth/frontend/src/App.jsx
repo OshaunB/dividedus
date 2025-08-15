@@ -12,6 +12,7 @@ import UserPage from "./pages/User";
 import AskOphelia from "./pages/AskOphelia";
 import CasePage from "./pages/CasePage.jsx";
 import ReportPage from "./pages/ReportPage.jsx";
+import CaseDetails from "./pages/CaseDetails";
 
 export default function App() {
   // const { setCurrentUser } = useContext(UserContext);
@@ -42,6 +43,7 @@ export default function App() {
           <Route path="/cases" element={<CasePage />} />
           <Route path="/report" element={<ReportPage />} />
           <Route path="*" element={<NotFoundPage />} />
+          <Route path="/cases/:id" element={<CaseDetails />} />
         </Routes>
       </main>
     </>
