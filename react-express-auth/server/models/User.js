@@ -3,30 +3,22 @@ const bcrypt = require("bcrypt");
 const SALT_ROUNDS = 12;
 
 class User {
-  // Private class property to store the password hash securely
+  // keep the hash private
   #passwordHash = null;
 
-  // Constructs a user instance from raw user data (e.g., from the database)
-  // Adds avatar_url and quote support
   constructor({ id, username, password_hash, avatar_url, quote }) {
     this.id = id;
     this.username = username;
-    this.avatar_url = avatar_url; // optional field: profile image
-    this.quote = quote;           // optional field: personal message
-    this.#passwordHash = password_hash; // keep hash private
+    this.avatar_url = avatar_url || null;
+    this.quote = quote || null;
+    this.#passwordHash = password_hash;
   }
 
-  // Compares a plain text password to the stored hashed password
   isValidPassword = async (password) => {
     return await bcrypt.compare(password, this.#passwordHash);
   };
 
-  /**
-   * Creates a new user in the database
-   * - Hashes the plain text password
-   * - Inserts username, password_hash, avatar_url, and quote into the `users` table
-   * - Returns a new User instance (without exposing the hash)
-   */
+  // CREATE
   static async create(username, password, avatar_url = null, quote = null) {
     const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
 
@@ -47,20 +39,14 @@ class User {
     return new User(rawUserData);
   }
 
-  /**
-   * Lists all users in the database.
-   * Returns an array of User instances, each hiding the password hash.
-   */
+  // LIST
   static async list() {
     const query = `SELECT * FROM users`;
     const result = await knex.raw(query);
     return result.rows.map((rawUserData) => new User(rawUserData));
   }
 
-  /**
-   * Finds a single user by ID.
-   * Returns a User instance or null if not found.
-   */
+  // FIND BY ID
   static async find(id) {
     const query = `SELECT * FROM users WHERE id = ?`;
     const result = await knex.raw(query, [id]);
@@ -68,10 +54,7 @@ class User {
     return rawUserData ? new User(rawUserData) : null;
   }
 
-  /**
-   * Finds a single user by username.
-   * Useful for login or checking uniqueness.
-   */
+  // FIND BY USERNAME
   static async findByUsername(username) {
     const query = `SELECT * FROM users WHERE username = ?`;
     const result = await knex.raw(query, [username]);
@@ -79,15 +62,12 @@ class User {
     return rawUserData ? new User(rawUserData) : null;
   }
 
-  /**
-   * Updates the username of a specific user by ID.
-   * (Can be expanded to support avatar or quote updates too)
-   */
+  // LEGACY: update only username (kept for compatibility)
   static async update(id, username) {
     const query = `
       UPDATE users
-      SET username=?
-      WHERE id=?
+      SET username = ?
+      WHERE id = ?
       RETURNING *
     `;
     const result = await knex.raw(query, [username, id]);
@@ -95,10 +75,30 @@ class User {
     return rawUpdatedUser ? new User(rawUpdatedUser) : null;
   }
 
-  /**
-   * Deletes all users from the database.
-   * Useful for resetting data in development/testing.
-   */
+  // NEW: partial update for { username?, quote?, avatar_url? }
+  static async updatePartial(id, patch) {
+    const allowed = ["username", "quote", "avatar_url"];
+    const keys = allowed.filter((k) => patch[k] !== undefined);
+
+    // nothing to update
+    if (keys.length === 0) return await User.find(id);
+
+    const setClause = keys.map((k, i) => `${k} = ?`).join(", ");
+    const values = keys.map((k) => patch[k]);
+
+    const query = `
+      UPDATE users
+      SET ${setClause}
+      WHERE id = ?
+      RETURNING *
+    `;
+
+    const result = await knex.raw(query, [...values, id]);
+    const row = result.rows[0];
+    return row ? new User(row) : null;
+  }
+
+  // OPTIONAL: deleteAll for tests/dev
   static async deleteAll() {
     return knex("users").del();
   }

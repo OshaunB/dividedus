@@ -1,5 +1,18 @@
 const Comment = require("../models/Comment");
+/*
+This file contains the logic for handling each comment-related request.
 
+Each function here is called by a route (e.g., GET, POST, PUT, DELETE),
+and is responsible for interacting with the database, processing data,
+and sending a response back to the user.
+
+For example:
+→ getAllComments() runs when someone visits GET /api/comments
+→ createComment() runs when someone sends a POST to /api/comments
+
+Controllers keep your code organized by separating route definitions
+from the logic that actually runs when a route is hit.
+*/
 const getAllComments = async (req, res) => {
   try {
     const comments = await Comment.getAll();

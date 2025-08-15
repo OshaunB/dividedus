@@ -16,3 +16,8 @@ export const updateUsername = async ({ id, username }) => {
   return fetchHandler(`${baseUrl}/${id}`, getPatchOptions({ id, username }))
 }
 
+// NEW: generic partial update (avatar_url, quote, etc.)
+export const updateUser = async ({ id, ...updates }) => {
+  // `updates` can include { avatar_url, quote, username, ... }
+  return fetchHandler(`${baseUrl}/${id}`, getPatchOptions(updates));
+};

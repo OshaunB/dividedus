@@ -1,6 +1,20 @@
 ///////////////////////////////
 // Imports
 ///////////////////////////////
+/*
+index.js: This is where we tell the app to use certain routes.
+
+Example:
+app.use("/api/comments", commentRoutes);
+
+This line means:
+→ “For any request that starts with /api/comments,
+   use the routes defined in the commentRoutes file.”
+
+The actual route logic (GET, POST, PUT, DELETE) is defined in separate files
+inside the routes folder. Those route files also connect to their corresponding
+controller functions, which handle what the app should do for each route.
+*/
 
 require("dotenv").config();
 const path = require("path");
@@ -16,7 +30,7 @@ const logErrors = require("./middleware/logErrors");
 const authControllers = require("./controllers/authControllers");
 const userControllers = require("./controllers/userControllers");
 const app = express();
-
+app.set("trust proxy", 1);
 // middleware
 app.use(handleCookieSessions); // adds a session property to each request representing the cookie
 app.use(logRoutes); // print information about each incoming request
@@ -48,12 +62,15 @@ app.patch("/api/users/:id", checkAuthentication, userControllers.updateUser);
 const cases = require("./routes/cases");
 app.use("/api/cases", cases);
 
-
 ///////////////////////////////
 // Comment Routes
 ///////////////////////////////
-const commentRoutes = require('./routes/commentRoutes');
-app.use('/api/comments', commentRoutes);
+const commentRoutes = require("./routes/commentRoutes");
+app.use("/api/comments", commentRoutes);
+
+const askOpheliaRoute = require("./routes/askOphelia");
+
+app.use("/api/ask-ophelia", askOpheliaRoute);
 
 ///////////////////////////////
 // Fallback Routes
