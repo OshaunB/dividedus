@@ -30,7 +30,7 @@ const logErrors = require("./middleware/logErrors");
 const authControllers = require("./controllers/authControllers");
 const userControllers = require("./controllers/userControllers");
 const app = express();
-
+app.set("trust proxy", 1);
 // middleware
 app.use(handleCookieSessions); // adds a session property to each request representing the cookie
 app.use(logRoutes); // print information about each incoming request
