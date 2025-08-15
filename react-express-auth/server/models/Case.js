@@ -36,31 +36,44 @@ class Case {
     return result.rows;
   }
 
+  // models/Case.js  — replace only the create() method
   static async create({
-    name,
-    description,
+    person_name,
+    age,
+    gender,
+    summary,
     status,
-    date_detained,
-    location,
-    image_url,
+    date_last_seen,
+    photo_url,
+    last_seen_city,
+    last_seen_state,
     user_id,
   }) {
-    const query = `
-      INSERT INTO cases (name, description, status, date_detained, location, image_url, user_id)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
-      RETURNING *;
-    `;
-    const values = [
-      name,
-      description,
-      status,
-      date_detained,
-      location,
-      image_url,
-      user_id,
+    const safeStatus = status && String(status).trim() ? status : "open";
+
+    const sql = `
+    INSERT INTO cases (
+      person_name, age, gender, summary, status,
+      date_last_seen, photo_url, last_seen_city, last_seen_state, user_id
+    )
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    RETURNING *;
+  `;
+    const vals = [
+      person_name ?? null,
+      age ?? null,
+      gender ?? null,
+      summary ?? null,
+      safeStatus,
+      date_last_seen ?? null,
+      photo_url ?? null,
+      last_seen_city ?? null,
+      last_seen_state ?? null,
+      user_id, // from session (checkAuthentication)
     ];
-    const result = await knex.raw(query, values);
-    return result.rows[0];
+
+    const result = await knex.raw(sql, vals);
+    return result.rows[0]; // includes id for redirect/link
   }
 
   static async update(id, updatedData) {
