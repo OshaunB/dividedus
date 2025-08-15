@@ -1,14 +1,31 @@
 const knex = require("../db/knex");
 
 class Case {
+  // List cases with submitted_by (username) included
   static async getAll() {
-    const query = `SELECT * FROM cases ORDER BY id ASC`;
+    const query = `
+      SELECT
+        c.*,
+        COALESCE(NULLIF(TRIM(u.username), ''), 'Unknown') AS submitted_by
+      FROM cases c
+      LEFT JOIN users u ON u.id = c.user_id
+      ORDER BY c.id ASC;
+    `;
     const result = await knex.raw(query);
     return result.rows;
   }
 
+  // Fetch a single case with submitted_by (username)
   static async getById(id) {
-    const query = `SELECT * FROM cases WHERE id = ?`;
+    const query = `
+      SELECT
+        c.*,
+        COALESCE(NULLIF(TRIM(u.username), ''), 'Unknown') AS submitted_by
+      FROM cases c
+      LEFT JOIN users u ON u.id = c.user_id
+      WHERE c.id = ?
+      LIMIT 1;
+    `;
     const result = await knex.raw(query, [id]);
     return result.rows[0];
   }

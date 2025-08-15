@@ -10,8 +10,8 @@ export default function AskOphelia() {
     e.preventDefault();
     if (!input.trim()) return;
 
-    const userMessage = { type: "user", text: input };
-    setMessages((prev) => [...prev, userMessage]);
+    const text = input;
+    setMessages((prev) => [...prev, { type: "user", text }]);
     setInput("");
     setIsLoading(true);
 
@@ -19,13 +19,11 @@ export default function AskOphelia() {
       const res = await fetch("/api/ask-ophelia", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: input }),
+        body: JSON.stringify({ message: text }),
       });
       const data = await res.json();
-
-      const botReply = { type: "ophelia", text: data.reply };
-      setMessages((prev) => [...prev, botReply]);
-    } catch (err) {
+      setMessages((prev) => [...prev, { type: "ophelia", text: data.reply }]);
+    } catch {
       setMessages((prev) => [
         ...prev,
         { type: "ophelia", text: "Sorry, something went wrong." },
@@ -37,51 +35,90 @@ export default function AskOphelia() {
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, [messages, isLoading]);
 
   return (
-    <div className="flex flex-col w-full h-[calc(100vh-73.6px)] bg-black px-4 sm:px-6 lg:px-12">
-      <header className="w-full flex flex-col items-center text-center space-y-2 pt-12">
-        <h1 className="text-5xl font-extrabold text-[#C2B280] tracking-wide py-4">
+    <div className="relative flex h-[calc(100vh-73.6px)] w-full flex-col
+                    bg-gradient-to-b from-[#0E1D21] via-black to-black">
+      {/* Header */}
+      <header className="w-full pt-10 text-center">
+        <h1 className="text-5xl font-extrabold tracking-wide text-[#C2B280] ml-6 mt-4">
           Ophelia
         </h1>
-        <p className="text-white text-lg sm:text-xl max-w-xl">
-          Ask me anything related to ICE, detention, and immigration and I will
-          provide resources
-        </p>
+        {/* <p className="mx-auto mt-3 max-w-2xl px-4 text-base sm:text-lg text-slate-200">
+          Ask me anything related to ICE, detention, and immigration and I’ll
+          point you to helpful resources.
+        </p> */}
       </header>
 
-      <div className="flex-1 overflow-y-auto py-6 space-y-4">
-        {messages.map((msg, idx) => (
-          <div
-            key={idx}
-            className={`max-w-3xl px-10 py-6 rounded-lg text-white transition duration-300 ease-in-out shadow-md ${
-              msg.type === "user"
-                ? "bg-[#334155] self-end ml-auto text-right text-lg sm:text-2xl rounded-br-none"
-                : "bg-[#0E1D21] self-start mr-auto text-left text-lg sm:text-2xl rounded-bl-none"
-            }`}>
-            {msg.text}
-          </div>
-        ))}
-        {isLoading && (
-          <div className="bg-[#1f2937] text-white px-6 py-4 rounded-lg text-left text-lg max-w-3xl self-start animate-pulse shadow-sm">
-            Ophelia is typing...
-          </div>
-        )}
-        <div ref={bottomRef} />
+      {/* Chat panel */}
+      <div className="mx-auto mt-4 w-full max-w-5xl flex-1 overflow-y-auto px-3 sm:px-6 py-6
+                      rounded-3xl border border-white/10 bg-white/5 backdrop-blur
+                      shadow-[0_20px_60px_-20px_rgba(0,0,0,0.6)]">
+        <div className="flex flex-col gap-4">
+          {messages.map((msg, idx) => {
+            const isUser = msg.type === "user";
+            return (
+              <div
+                key={idx}
+                className={`flex items-start gap-3 ${isUser ? "justify-end" : "justify-start"}`}
+              >
+                {/* Avatar chip */}
+                {!isUser && (
+                  <div className="grid h-8 w-8 place-items-center rounded-full
+                                  bg-[#C2B280]/20 text-[#C2B280] font-bold">O</div>
+                )}
+                <div
+                  className={`max-w-[75%] rounded-2xl px-5 py-3 text-base sm:text-lg leading-relaxed
+                              shadow ring-1
+                              ${isUser
+                                ? "bg-slate-700/80 text-white ring-white/10 rounded-br-none"
+                                : "bg-[#0E1D21]/90 text-slate-100 ring-[#C2B280]/20 rounded-bl-none"}`}
+                >
+                  {msg.text}
+                </div>
+                {isUser && (
+                  <div className="grid h-8 w-8 place-items-center rounded-full
+                                  bg-slate-700 text-white font-bold">U</div>
+                )}
+              </div>
+            );
+          })}
+
+          {/* Typing indicator */}
+          {isLoading && (
+            <div className="flex items-start gap-3">
+              <div className="grid h-8 w-8 place-items-center rounded-full
+                              bg-[#C2B280]/20 text-[#C2B280] font-bold">O</div>
+              <div className="rounded-2xl rounded-bl-none bg-[#0E1D21]/90 px-5 py-3
+                              text-slate-300 ring-1 ring-[#C2B280]/20 shadow">
+                <div className="flex items-center gap-2">
+                  <span className="inline-block h-2 w-2 animate-bounce rounded-full bg-slate-300"></span>
+                  <span className="inline-block h-2 w-2 animate-bounce rounded-full bg-slate-300 [animation-delay:120ms]"></span>
+                  <span className="inline-block h-2 w-2 animate-bounce rounded-full bg-slate-300 [animation-delay:240ms]"></span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div ref={bottomRef} />
+        </div>
       </div>
 
-      <div className="w-full px-2 sm:px-4">
-        <form
-          onSubmit={handleSubmit}
-          className="sticky bottom-0 bg-black p-4 flex items-center justify-center w-full mx-auto">
-          <div className="flex items-center w-full max-w-3xl gap-x-2">
+      {/* Input bar */}
+      <div className="sticky bottom-0 left-0 right-0 z-10
+                      bg-gradient-to-t from-black via-black/90 to-transparent pt-6 pb-8">
+        <form onSubmit={handleSubmit} className="mx-auto w-full max-w-3xl px-3 sm:px-6">
+          <div className="relative">
             <input
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Ex. living conditions"
-              className="flex-1 border border-gray-600 rounded-full px-4 sm:px-6 py-3 sm:py-4 bg-white text-black focus:outline-none focus:ring-2 focus:ring-[#C2B280] text-base sm:text-lg md:text-xl text-center"
+              aria-label="Ask Ophelia"
+              placeholder="Ask a question…"
+              className="h-14 sm:h-16 w-full rounded-full border border-white/10 bg-white/90
+                         backdrop-blur px-5 pr-20 sm:pr-24 text-slate-900 placeholder:text-slate-500
+                         focus:outline-none focus:ring-2 focus:ring-[#C2B280]"
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault();
@@ -92,8 +129,17 @@ export default function AskOphelia() {
             <button
               type="submit"
               disabled={isLoading}
-              className="h-full px-4 sm:px-6 py-2 sm:py-3 bg-[#C2B280] text-black text-base sm:text-lg font-semibold rounded-full hover:bg-[#e0d6ac] transition-colors flex items-center justify-center">
-              Send
+              className="absolute right-2 top-1/2 -translate-y-1/2
+                         grid h-11 w-11 sm:h-12 sm:w-12 place-items-center rounded-full
+                         bg-[#C2B280] text-black shadow hover:bg-[#e0d6ac]
+                         disabled:opacity-60 disabled:cursor-not-allowed"
+              title="Send"
+            >
+              {/* paper plane */}
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                   fill="currentColor" className="h-5 w-5">
+                <path d="M2.01 21 23 12 2.01 3 2 10l14 2-14 2z" />
+              </svg>
             </button>
           </div>
         </form>
