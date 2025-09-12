@@ -1,1 +1,3 @@
-/*  /index.html  200
+/api/*       https://dividedus-api.onrender.com/:splat    200
+/guardian/*  https://guardian-proxy.onrender.com/:splat   200
+/*            /index.html                                200

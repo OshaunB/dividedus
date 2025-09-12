@@ -1,24 +1,7 @@
-///////////////////////////////
-// Imports
-///////////////////////////////
-/*
-index.js: This is where we tell the app to use certain routes.
-
-Example:
-app.use("/api/comments", commentRoutes);
-
-This line means:
-→ “For any request that starts with /api/comments,
-   use the routes defined in the commentRoutes file.”
-
-The actual route logic (GET, POST, PUT, DELETE) is defined in separate files
-inside the routes folder. Those route files also connect to their corresponding
-controller functions, which handle what the app should do for each route.
-*/
-
 require("dotenv").config();
 const path = require("path");
 const express = require("express");
+const app = express();
 
 // middleware imports
 const handleCookieSessions = require("./middleware/handleCookieSessions");
@@ -26,70 +9,49 @@ const checkAuthentication = require("./middleware/checkAuthentication");
 const logRoutes = require("./middleware/logRoutes");
 const logErrors = require("./middleware/logErrors");
 
-// controller imports
+// controllers & routers
 const authControllers = require("./controllers/authControllers");
 const userControllers = require("./controllers/userControllers");
-const app = express();
+const cases = require("./routes/cases");
+const commentRoutes = require("./routes/commentRoutes");
+const askOpheliaRoute = require("./routes/askOphelia");
+
+// trust proxy for secure cookies on Render
 app.set("trust proxy", 1);
-// middleware
-app.use(handleCookieSessions); // adds a session property to each request representing the cookie
-app.use(logRoutes); // print information about each incoming request
-app.use(express.json()); // parse incoming request bodies as JSON
-app.use(express.static(path.join(__dirname, "../frontend/dist"))); // Serve static assets from the dist folder of the frontend
 
-///////////////////////////////
-// Auth Routes
-///////////////////////////////
+// core middleware
+app.use(handleCookieSessions);
+app.use(logRoutes);
+app.use(express.json());
 
+// ✅ Health check for Render
+app.get("/health", (_req, res) => res.send("ok"));
+
+// ===== API ROUTES ONLY (Render will NOT have ../frontend/dist) =====
 app.post("/api/auth/register", authControllers.registerUser);
 app.post("/api/auth/login", authControllers.loginUser);
 app.get("/api/auth/me", authControllers.showMe);
 app.delete("/api/auth/logout", authControllers.logoutUser);
 
-///////////////////////////////
-// User Routes
-///////////////////////////////
-
-// These actions require users to be logged in (authentication)
-// Express lets us pass a piece of middleware to run for a specific endpoint
 app.get("/api/users", checkAuthentication, userControllers.listUsers);
 app.get("/api/users/:id", checkAuthentication, userControllers.showUser);
 app.patch("/api/users/:id", checkAuthentication, userControllers.updateUser);
 
-///////////////////////////////
-// Case Routes
-///////////////////////////////
-const cases = require("./routes/cases");
 app.use("/api/cases", cases);
-
-///////////////////////////////
-// Comment Routes
-///////////////////////////////
-const commentRoutes = require("./routes/commentRoutes");
 app.use("/api/comments", commentRoutes);
-
-const askOpheliaRoute = require("./routes/askOphelia");
-
 app.use("/api/ask-ophelia", askOpheliaRoute);
 
-///////////////////////////////
-// Fallback Routes
-///////////////////////////////
-
-// Requests meant for the API will be sent along to the router.
-// For all other requests, send back the index.html file in the dist folder.
-app.get("*", (req, res, next) => {
-  if (req.originalUrl.startsWith("/api")) return next();
-  res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
-});
+// ❌ REMOVE these in Render (they reference ../frontend/dist which isn’t deployed):
+// app.use(express.static(path.join(__dirname, "../frontend/dist")));
+// app.get("*", (req, res, next) => {
+//   if (req.originalUrl.startsWith("/api")) return next();
+//   res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
+// });
 
 app.use(logErrors);
 
-///////////////////////////////
-// Start Listening
-///////////////////////////////
-
+// start server (Render injects PORT)
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}/`);
+  console.log(`API listening on :${port}`);
 });
